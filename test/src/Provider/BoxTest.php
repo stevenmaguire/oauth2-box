@@ -112,4 +112,28 @@ class BoxTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($name, $user->getName());
         $this->assertEquals($picture, $user->getAvatarUrl());
     }
+
+    /**
+     *
+     * @expectedException \League\OAuth2\Client\Provider\Exception\IdentityProviderException
+     */
+    public function testUserDataFails()
+    {
+        $postResponse = m::mock('Psr\Http\Message\ResponseInterface');
+        $postResponse->shouldReceive('getBody')->andReturn('{"access_token": "mock_access_token","expires_in": 3600,"restricted_to": [],"token_type": "bearer","refresh_token": "mock_refresh_token"}');
+        $postResponse->shouldReceive('getHeader')->andReturn(['content-type' => 'json']);
+
+        $userResponse = m::mock('Psr\Http\Message\ResponseInterface');
+        $userResponse->shouldReceive('getBody')->andReturn('{"type": "error","status": 409,"code": "conflict","context_info": {"errors": [{"reason": "invalid_parameter","name": "group_tag_name","message": "Invalid value \'All Box \'. A resource with value \'All Box \' already exists"}]},"help_url": "http://developers.box.com/docs/#errors","message": "Resource with the same name already exists","request_id": "2132632057555f584de87b7"}');
+        $userResponse->shouldReceive('getHeader')->andReturn(['content-type' => 'json']);
+
+        $client = m::mock('GuzzleHttp\ClientInterface');
+        $client->shouldReceive('send')
+            ->times(2)
+            ->andReturn($postResponse, $userResponse);
+        $this->provider->setHttpClient($client);
+
+        $token = $this->provider->getAccessToken('authorization_code', ['code' => 'mock_authorization_code']);
+        $user = $this->provider->getResourceOwner($token);
+    }
 }

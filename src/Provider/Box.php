@@ -2,6 +2,7 @@
 
 use League\OAuth2\Client\Provider\AbstractProvider;
 use League\OAuth2\Client\Token\AccessToken;
+use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use Psr\Http\Message\ResponseInterface;
 
 class Box extends AbstractProvider
@@ -77,7 +78,9 @@ class Box extends AbstractProvider
      */
     protected function checkResponse(ResponseInterface $response, $data)
     {
-
+        if (isset($data['type']) && $data['type'] === 'error') {
+            throw new IdentityProviderException($data['message'], $data['status'], $response);
+        }
     }
 
     /**
