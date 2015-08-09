@@ -108,9 +108,13 @@ class BoxTest extends \PHPUnit_Framework_TestCase
         $user = $this->provider->getResourceOwner($token);
 
         $this->assertEquals($email, $user->getEmail());
+        $this->assertEquals($email, $user->toArray()['login']);
         $this->assertEquals($userId, $user->getId());
+        $this->assertEquals($userId, $user->toArray()['id']);
         $this->assertEquals($name, $user->getName());
+        $this->assertEquals($name, $user->toArray()['name']);
         $this->assertEquals($picture, $user->getAvatarUrl());
+        $this->assertEquals($picture, $user->toArray()['avatar_url']);
     }
 
     /**

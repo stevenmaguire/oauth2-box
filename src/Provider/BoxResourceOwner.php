@@ -1,27 +1,40 @@
 <?php namespace Stevenmaguire\OAuth2\Client\Provider;
 
-use League\OAuth2\Client\Provider\GenericResourceOwner;
+use League\OAuth2\Client\Provider\ResourceOwnerInterface;
 
-/**
- * @property array $response
- * @property string $resourceOwnerId
- */
-class BoxResourceOwner extends GenericResourceOwner
+class BoxResourceOwner implements ResourceOwnerInterface
 {
+    /**
+     * Raw response
+     *
+     * @var array
+     */
+    protected $response;
+
+    /**
+     * Creates new resource owner.
+     *
+     * @param array  $response
+     */
+    public function __construct(array $response = array())
+    {
+        $this->response = $response;
+    }
+
     /**
      * Get resource owner id
      *
-     * @return string
+     * @return string|null
      */
     public function getId()
     {
-        return $this->resourceOwnerId;
+        return $this->response['id'] ?: null;
     }
 
     /**
      * Get resource owner email
      *
-     * @return string
+     * @return string|null
      */
     public function getEmail()
     {
@@ -31,7 +44,7 @@ class BoxResourceOwner extends GenericResourceOwner
     /**
      * Get resource owner name
      *
-     * @return string
+     * @return string|null
      */
     public function getName()
     {
@@ -41,10 +54,20 @@ class BoxResourceOwner extends GenericResourceOwner
     /**
      * Get resource owner avatar url
      *
-     * @return string
+     * @return string|null
      */
     public function getAvatarUrl()
     {
         return $this->response['avatar_url'] ?: null;
+    }
+
+    /**
+     * Return all of the owner details available as an array.
+     *
+     * @return array
+     */
+    public function toArray()
+    {
+        return $this->response;
     }
 }
