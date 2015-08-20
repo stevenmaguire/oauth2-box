@@ -66,7 +66,11 @@ class Box extends AbstractProvider
     protected function checkResponse(ResponseInterface $response, $data)
     {
         if (isset($data['type']) && $data['type'] === 'error') {
-            throw new IdentityProviderException($data['message'], $data['status'], $response);
+            throw new IdentityProviderException(
+                $data['message'],
+                $data['status'],
+                $response
+            );
         }
     }
 
