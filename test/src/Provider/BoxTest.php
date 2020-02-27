@@ -144,4 +144,23 @@ class BoxTest extends \PHPUnit_Framework_TestCase
         $token = $this->provider->getAccessToken('authorization_code', ['code' => 'mock_authorization_code']);
         $user = $this->provider->getResourceOwner($token);
     }
+
+    /**
+     * @expectedException \League\OAuth2\Client\Provider\Exception\IdentityProviderException
+     */
+    public function testOauth2Error()
+    {
+        $response = m::mock('Psr\Http\Message\ResponseInterface');
+        $response->shouldReceive('getBody')->andReturn('{"error": "invalid_grant", "error_description": "Invalid refresh token"}');
+        $response->shouldReceive('getHeader')->andReturn(['content-type' => 'json']);
+        $response->shouldReceive('getStatusCode')->andReturn(400);
+
+        $client = m::mock('GuzzleHttp\ClientInterface');
+        $client->shouldReceive('send')
+            ->times(1)
+            ->andReturn($response);
+        $this->provider->setHttpClient($client);
+
+        $token = $this->provider->getAccessToken('refresh_token', ['refresh_token' => 'mock_refresh_token']);
+    }
 }
