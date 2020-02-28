@@ -60,7 +60,7 @@ class Box extends AbstractProvider
      *
      * @throws IdentityProviderException
      * @param  ResponseInterface $response
-     * @param  string $data Parsed response data
+     * @param  array $data Parsed response data
      * @return void
      */
     protected function checkResponse(ResponseInterface $response, $data)
@@ -69,6 +69,16 @@ class Box extends AbstractProvider
             throw new IdentityProviderException(
                 $data['message'],
                 $data['status'],
+                $response
+            );
+        }
+
+        // Handle Oauth2 Error
+        // https://developer.box.com/reference/resources/oauth2-error/
+        if (isset($data['error'], $data['error_description'])) {
+            throw new IdentityProviderException(
+                $data['error_description'],
+                $response->getStatusCode(),
                 $response
             );
         }
