@@ -1,6 +1,20 @@
 # Changelog
 All Notable changes to `oauth2-box` will be documented in this file
 
+## 2.1.0 - 2020-02-28
+
+### Added
+- Additional handling for OAuth specific error responses - thanks @m1x0n!
+
+### Deprecated
+- Nothing
+
+### Fixed
+- Nothing
+
+### Removed
+- Nothing
+
 ## 2.0.0 - 2017-01-25
 
 ### Added
